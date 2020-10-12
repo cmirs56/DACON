@@ -10,26 +10,39 @@ library(moonBook)
 mytable(voted ~ ., data = train) # Descriptive Statistics by 'voted' 
 
 
-# data cleasing -----------------------------------------------------------
+# data cleansing -----------------------------------------------------------
 
 # erase the index column
-
+train <- train[-1]
+train
 
 # Visualization -----------------------------------------------------------
 
 library(ggplot2)
-colnames(train) # Select the EDA_features: age_group, education, engnat, familysize, gender, hand, married, race, religion
+colnames(train) # Select the possible features: age_group, education, engnat, familysize, gender, hand, married, race, religion
 
 ggplot(train, aes(x = voted)) +
   geom_bar(position = "dodge")
 
 # Q_A_machiavellianism test score: boxplot
+library(dplyr)
 
+Q_A <- train %>% 
+  select(matches('A$'))
+
+plot(Q_A)
+
+library(PerformanceAnalytics)
+chart.Correlation(Q_A, histogram[,c(00:00)],pch=19) # Correlation of Qs_positive vs. negative : grouping the Qs
 
 # Q_E_consumed time for each Qs: boxplot 
 
-library(PerformanceAnalytics)
-chart.Correlation(df_narm[,c(00:00)],pch=19) # Correlation of Qs_positive vs. negative : grouping the Qs
+Q_E <- train %>% 
+  select(matches('E$'), -familysize, -race)
+
+
+
+
 
 # age_group
 
