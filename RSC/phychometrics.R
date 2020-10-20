@@ -4,6 +4,7 @@ train <- read_csv("DAT/train.csv")
 head(train)
 str(train)
 summary(train)
+head(train)
 View(train)
 
 library(moonBook)
@@ -12,21 +13,17 @@ mytable(voted ~ ., data = train) # Descriptive Statistics by 'voted'
 
 # data cleansing -----------------------------------------------------------
 
-# erase the index column
-train <- train[-1]
+train <- train[-1] # erase the index column
 train
 
-
-
-# Missing data ------------------------------------------------------------
-
-
+sum(is.na(train)) # Missing data 
+colSums(is.na(train))
 
 
 # Visualization -----------------------------------------------------------
 
 library(ggplot2)
-colnames(train) # Select the possible features: age_group, education, engnat, familysize, gender, hand, married, race, religion
+colnames(train) # Select the possible features: age_group, education, engnat, familysize, gender, hand, married, race, religion, urban, tp__, wr, wf 
 
 ggplot(train, aes(x = voted)) +
   geom_bar(position = "dodge")
@@ -35,19 +32,23 @@ ggplot(train, aes(x = voted)) +
 library(dplyr)
 
 Q_A <- train %>% 
-  select(matches('A$'))
+  select(matches('A$')) # select the question columns 
 str(Q_A)
+head(Q_A)
 
 # Correlation of Qs_positive vs. negative : grouping the Qs
 
-cor_Q_A <- cor(Q_A)
-pairs(cor_Q_A, panel = panel.smooth)
+cor_Q_A <- cor(Q_A) # calculate the correlation matrix 
+cor_Q_A
+
+pairs(Q_A, panel = panel.smooth) # scatter matrix plot (loading time!!!)
 
 library(PerformanceAnalytics)
 ?chart.Correlation
-chart.Correlation(cor_Q_A, histogram = TRUE,pch=19) # need to check again!!! 
+chart.Correlation(Q_A, histogram = TRUE,pch=19) # need to check again!!! 
 
 library(corrplot)
+?corrplot
 corrplot(cor_Q_A, method="number")
 corrplot(cor_Q_A, method="circle")
 corrplot(cor_Q_A, method="ellipse")
@@ -101,8 +102,9 @@ Q_E <- train %>%
 
 # Modeling ----------------------------------------------------------------
 
-
-
+x_train <- 
+  
+y_train <- 
 
 # Evaluation --------------------------------------------------------------
 
