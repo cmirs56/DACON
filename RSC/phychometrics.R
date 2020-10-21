@@ -4,7 +4,6 @@ train <- read_csv("DAT/train.csv")
 head(train)
 str(train)
 summary(train)
-head(train)
 View(train)
 
 library(moonBook)
@@ -32,7 +31,7 @@ ggplot(train, aes(x = voted)) +
 library(dplyr)
 
 Q_A <- train %>% 
-  select(matches('A$')) # select the question columns 
+  select(matches('A$')) # select the question columns_end with 'A' 
 str(Q_A)
 head(Q_A)
 
@@ -44,11 +43,9 @@ cor_Q_A
 pairs(Q_A, panel = panel.smooth) # scatter matrix plot (loading time!!!)
 
 library(PerformanceAnalytics)
-?chart.Correlation
 chart.Correlation(Q_A, histogram = TRUE,pch=19) # need to check again!!! 
 
 library(corrplot)
-?corrplot
 corrplot(cor_Q_A, method="number")
 corrplot(cor_Q_A, method="circle")
 corrplot(cor_Q_A, method="ellipse")
@@ -56,7 +53,11 @@ corrplot(cor_Q_A, method="color")
 corrplot(cor_Q_A, method="shade", addshade="all", shade.col=NA, 
          tl.col="red", tl.srt=30, diag=FALSE, addCoef.col="black", order="FPC")
 
-c(QeA, QdA, QgA, QaA, QrA, QfA, QqA, QiA, QnA, QkA)
+negative <- c('QeA', 'QdA', 'QgA', 'QaA', 'QrA', 'QfA', 'QqA', 'QiA', 'QnA', 'QkA') # select the Qs with negative correlations
+
+library(tidyverse)
+
+purrr::
 
 
 # Q_E_consumed time for each Qs
