@@ -9,7 +9,6 @@ View(train)
 library(moonBook)
 mytable(voted ~ ., data = train) # Descriptive Statistics by 'voted' 
 
-
 # data cleansing -----------------------------------------------------------
 
 train <- train[-1] # erase the index column
@@ -17,7 +16,6 @@ train
 
 sum(is.na(train)) # Missing data 
 colSums(is.na(train))
-
 
 # Visualization -----------------------------------------------------------
 
@@ -56,10 +54,20 @@ corrplot(cor_Q_A, method="shade", addshade="all", shade.col=NA,
 negative <- c('QeA', 'QdA', 'QgA', 'QaA', 'QrA', 'QfA', 'QqA', 'QiA', 'QnA', 'QkA') # select the Qs with negative correlations
 
 library(tidyverse)
+train[negative] <- map(train[negative], ~-.x+6) # repeat_purrr : score = 6 - score  
 
-purrr::
+Q_A <- train %>% 
+  select(matches('A$'))
+cor_Q_A <- cor(Q_A)
+  
+corrplot(cor_Q_A, method="shade", addshade="all", shade.col=NA, 
+         tl.col="red", tl.srt=30, diag=FALSE, addCoef.col="black", order="FPC")
 
+# generate a new column 
 
+machi_score 
+         
+         
 # Q_E_consumed time for each Qs
 
 Q_E <- train %>% 
@@ -99,8 +107,6 @@ Q_E <- train %>%
 # Feature selection -------------------------------------------------------
 
 
-
-
 # Modeling ----------------------------------------------------------------
 
 x_train <- 
@@ -108,5 +114,4 @@ x_train <-
 y_train <- 
 
 # Evaluation --------------------------------------------------------------
-
 
