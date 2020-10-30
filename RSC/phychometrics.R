@@ -63,45 +63,86 @@ cor_Q_A <- cor(Q_A)
 corrplot(cor_Q_A, method="shade", addshade="all", shade.col=NA, 
          tl.col="red", tl.srt=30, diag=FALSE, addCoef.col="black", order="FPC")
 
-# generate a new column 
+# derived variable_machi_score_generate a new column 
 
-machi_score 
-         
+dim(train)
+train <- train %>% 
+  mutate(machi_score = (QaA + QbA + QcA + QdA + QeA + QfA + QgA + QhA + QiA + QjA + QkA + QlA + QmA + QnA + QoA + QpA + QqA + QrA + QsA + QtA)/20)
+dim(train) 
          
 # Q_E_consumed time for each Qs
 
 Q_E <- train %>% 
   select(matches('E$'), -familysize, -race)
 
+# voted: 1=Yes, 2=No
+
+str(train$voted)
+train$voted <- as.factor(train$voted)
 
 # age_group
 
+ggplot(train, aes(x = age_group, fill = voted)) +
+  geom_bar(position = "dodge")
+
 # education: 0 means no answer 
+
+ggplot(train, aes(x = education, fill = voted)) +
+  geom_bar(position = "dodge")
 
 # engnat: 1=Yes, 2=No, 0=n/a
 
+ggplot(train, aes(x = engnat, fill = voted)) +
+  geom_bar(position = "dodge")
+
 # familysize: 
+
+ggplot(train, aes(x = familysize)) +
+  geom_boxplot()
+
+train$familysize <- ifelse(train$familysize > 10, NA, train$familysize)
+
+ggplot(train, aes(x = familysize)) +
+  geom_histogram(binwidth = 1) +
+  facet_grid(voted ~ .)
 
 # gender 
 
+ggplot(train, aes(x = gender, fill = voted)) +
+  geom_bar(position = "dodge")
+
 # hand: 1=Right, 2=Left, 3=Both, 0=n/a
+
+ggplot(train, aes(x = hand, fill = voted)) +
+  geom_bar(position = "dodge")
 
 # married: 1=Never married, 2=Currently married, 3=Previously married, 0=Other
 
+ggplot(train, aes(x = married, fill = voted)) +
+  geom_bar(position = "dodge")
+
 # race: Asian, Arab, Black, Indigenous Australian, Native American, White, Other
+
+ggplot(train, aes(x = race, fill = voted)) +
+  geom_bar(position = "dodge")
 
 # religion: Agnostic, Atheist, Buddhist, Christian_Catholic, Christian_Mormon, Christian_Protestant, Christian_Other, Hindu, Jewish, Muslim, Sikh, Othe
 
-# tp01~10: grouping the items based on the correlation 
+ggplot(train, aes(x = religion, fill = voted)) +
+  geom_bar(position = "dodge")
 
 # urban: 1=Rural, 2=Suburban, 3=Urban, 0=n/a
+
+ggplot(train, aes(x = urban, fill = voted)) +
+  geom_bar(position = "dodge")
+
+# tp01~10: grouping the items based on the correlation, 7=no response  
+
+
 
 # wr01~13: know the definition of real things: 1=Yes, 0=No
 
 # wf01~03: know the definition of fictitious things: 1=Yes, 0=No
-
-# voted: 1=Yes, 2=No 
-
 
 
 # Feature selection -------------------------------------------------------
@@ -114,4 +155,3 @@ x_train <-
 y_train <- 
 
 # Evaluation --------------------------------------------------------------
-
