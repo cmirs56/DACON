@@ -1,22 +1,24 @@
+
+# Data Loading ------------------------------------------------------------
 library(readr)
 train <- read_csv("DAT/train.csv")
 
 head(train)
 str(train)
 summary(train)
+Hmisc::describe(train)
+table(train$familysize)
 View(train)
 
 library(moonBook)
 mytable(voted ~ ., data = train) # Descriptive Statistics by 'voted' 
 
-# Preprocessing -----------------------------------------------------------
+# Preprocessing & EDA -----------------------------------------------------------
 train <- train[-1] # erase the index column
 train
-
 sum(is.na(train)) # Missing data 
 colSums(is.na(train))
 
-# Visualization & preprocessing -----------------------------------------------------------
 library(ggplot2)
 colnames(train) # Select the possible features: age_group, education, engnat, familysize, gender, hand, married, race, religion, urban, tp__, wr, wf 
 ggplot(train, aes(x = voted)) +
@@ -53,7 +55,7 @@ train[negative] <- map(train[negative], ~-.x+6) # repeat_purrr : score = 6 - sco
 Q_A <- train %>% 
   select(matches('A$'))
 cor_Q_A <- cor(Q_A)
-corrplot(cor_Q_A, method="shade", addshade="all", shade.col=NA, 
+corrplot::corrplot(cor_Q_A, method="shade", addshade="all", shade.col=NA, 
          tl.col="red", tl.srt=30, diag=FALSE, addCoef.col="black", order="FPC")
 
 # derived variable_machi_score_generate a new column 
@@ -64,7 +66,7 @@ dim(train)
          
 # Q_E_consumed time for each Qs
 Q_E <- train %>% 
-  select(matches('E$'), -familysize, -race)
+  select(matches('E$'), -familysize, -race -machi_score)
 
 # voted: 1=Yes, 2=No
 str(train$voted)
@@ -77,18 +79,30 @@ ggplot(train, aes(x = age_group, fill = voted)) +
 # education: 0 means no answer 
 ggplot(train, aes(x = education, fill = voted)) +
   geom_bar(position = "dodge")
+ggplot(train, aes(education, fill = voted)) +
+  geom_bar(position = "fill") +
+  theme(axis.title.x = element_text(angle = 45, vjust = 0.6)) +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = "Education", y = "Rate", 
+       title = "Ratio bar plot by education")
 
 # engnat: 1=Yes, 2=No, 0=n/a
 ggplot(train, aes(x = engnat, fill = voted)) +
   geom_bar(position = "dodge")
 
 # familysize: 
-ggplot(train, aes(x = familysize)) +
+ggplot(train, aes(x = familysize, color = voted)) +
   geom_boxplot()
 train$familysize <- ifelse(train$familysize > 7, NA, train$familysize)
+table(train$familysize)
 ggplot(train, aes(x = familysize)) +
   geom_histogram(binwidth = 1) +
   facet_grid(voted ~ .)
+train %>% 
+  ggplot(aes(familysize, fill = voted)) +
+  geom_density(alpha = .7) +
+  scale_fill_brewer(palette = "Set1")
 
 # gender 
 ggplot(train, aes(x = gender, fill = voted)) +
@@ -135,16 +149,17 @@ ggplot(train, aes(x = wr, y = wf)) +
   geom_point(shape = 19, size = 3) +
   facet_grid(voted ~.)
 
-# Feature selection -------------------------------------------------------
-colnames(train) # age_group, education, engnat, familysize, gender, hand, married, race, religion, urban, machi_score
-
-
 # Modeling ----------------------------------------------------------------
+train_x <- subset(train, select = c(age_group, gender, race, religion, education, engnat, familysize, married, urban, machi_score, wr, wf)) 
 
-train_x <- train[] 
 train_y <- train$voted 
+
+tr.ratio <- 0.7
 
 valudation 
 train_new  
+
+colnames(train) #Feature selection: age_group, education, engnat, familysize, gender, hand, married, race, religion, urban, machi_score, wr, wf 
+
 
 # Assessment_AUC --------------------------------------------------------------
