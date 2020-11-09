@@ -14,7 +14,7 @@ library(moonBook)
 mytable(voted ~ ., data = train) # Descriptive Statistics by 'voted' 
 
 # Preprocessing & EDA -----------------------------------------------------------
-train <- train[-1] # erase the index column
+#train <- train[-1] # erase the index column
 train
 sum(is.na(train)) # Missing data 
 colSums(is.na(train))
@@ -34,10 +34,10 @@ head(Q_A)
 # Correlation of Qs_positive vs. negative : grouping the Qs
 cor_Q_A <- cor(Q_A) # calculate the correlation matrix 
 cor_Q_A
-pairs(Q_A, panel = panel.smooth) # scatter matrix plot (loading time!!!)
+#pairs(Q_A, panel = panel.smooth) # scatter matrix plot (loading time!!!)
 
-library(PerformanceAnalytics)
-chart.Correlation(Q_A, histogram = TRUE,pch=19) # need to check again!!! 
+#library(PerformanceAnalytics)
+#chart.Correlation(Q_A, histogram = TRUE,pch=19) # need to check again!!! 
 
 library(corrplot)
 corrplot(cor_Q_A, method="number")
@@ -150,16 +150,30 @@ ggplot(train, aes(x = wr, y = wf)) +
   facet_grid(voted ~.)
 
 # Modeling ----------------------------------------------------------------
-train_x <- subset(train, select = c(age_group, gender, race, religion, education, engnat, familysize, married, urban, machi_score, wr, wf)) 
+df <- subset(train, select = c(age_group, gender, race, religion, education, engnat, familysize, married, urban, machi_score, wr, wf, voted)) 
+dim(df)
+str(df)
 
-train_y <- train$voted 
+y_name <- "voted"
+x_name <- names(df)[1:12]
 
-tr.ratio <- 0.7
+tr_ratio <- 0.7
+y1_index <- which(df[ , y_name] == 1)
+y2_index <- which(df[ , y_name] == 2)
 
-valudation 
-train_new  
+set.seed(123)
+sample_y1_tr_id <- sample(y1_index, length(y1_index) * tr_ratio, replace = FALSE)
+sample_y2_tr_id <- sample(y2_index, length(y2_index) * tr_ratio, replace = FALSE)
 
-colnames(train) #Feature selection: age_group, education, engnat, familysize, gender, hand, married, race, religion, urban, machi_score, wr, wf 
+sample_tr_id <- c(sample_y1_tr_id, sample_y2_tr_id)
+data_tr_df <- df[sample_tr_id, ]
+data_te_df <- df[-sample_tr_id, ]
+
+table(data_tr_df$voted)
+table(data_te_df$voted)
+
+
+#Feature selection: age_group, education, engnat, familysize, gender, hand, married, race, religion, urban, machi_score, wr, wf 
 
 
 # Assessment_AUC --------------------------------------------------------------
